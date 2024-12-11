@@ -24,7 +24,8 @@ jobs:
 
     - name: Start Compilation
       run: |
-        make menuconfig  # Optional: Customize configuration
+        make defconfig
+        # make menuconfig  # Optional: Customize configuration
         make -j$(nproc) V=s  # Start the compilation
 
     - name: Archive Build Outputs
