@@ -29,8 +29,20 @@ jobs:
         make -j$(nproc) V=s  # Start the compilation
 
     - name: Archive Build Outputs
-      if: success()
-      uses: actions/upload-artifact@v3
+      run: |
+        BUILD_TIMESTAMP=$(date +'%Y%m%d_%H%M%S')
+        OUTPUT_NAME="immortalwrt_${BUILD_TIMESTAMP}.tar.gz"
+        tar -czvf $OUTPUT_NAME bin/
+        echo "OUTPUT_NAME=$OUTPUT_NAME" >> $GITHUB_ENV  # 将文件名存入环境变量
+
+    - name: Upload Release Artifact
+      uses: ncipollo/release-action@v1
       with:
-        name: build-artifacts
-        path: bin/
+        token: ${{ secrets.GITHUB_TOKEN }}
+        tag: "build-${{ github.run_number }}"  # 每次构建生成唯一的 Tag
+        releaseName: "Build on ${{ github.event.inputs.date || 'Manual Trigger' }}"
+        assets: ${{ env.OUTPUT_NAME }}  # 使用之前定义的文件名
+        body: |
+          **Build Details**:
+          - Time: ${{ env.OUTPUT_NAME }}
+          - Commit: ${{ github.sha }}
