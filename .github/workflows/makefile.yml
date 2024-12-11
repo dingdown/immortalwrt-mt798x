@@ -1,10 +1,7 @@
 name: Build ImmortalWRT MT798X
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
+  workflow_dispatch:  # 允许手动触发
 
 jobs:
   build:
